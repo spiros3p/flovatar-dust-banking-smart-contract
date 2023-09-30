@@ -147,7 +147,7 @@ access(all) contract DustLender {
         // 2.
         let dustAmountToLend = dustAmountToClaim * ( 1.0 - self.serviceFee )
         let vaultDust <- self.witdrawDustFromThisWalletVault(amount: dustAmountToLend)
-        self.funDepositDustToUser(vault: <- vaultDust, receiver: wallet)
+        self.transferDustToUser(vault: <- vaultDust, receiver: wallet)
         // 3.
         let ledgerEntry = self.registerLoanToLedger(
             wallet: wallet, 
@@ -198,7 +198,7 @@ access(all) contract DustLender {
         emit CollateralRetrieved(wallet: wallet, flovatarId: flovatarId, entry: entry)
     }
 
-    access(contract) fun funDepositDustToUser(vault: @FungibleToken.Vault, receiver: Address) {
+    access(contract) fun transferDustToUser(vault: @FungibleToken.Vault, receiver: Address) {
         let vaultRefUser = getAccount(receiver).getCapability(FlovatarDustToken.VaultReceiverPath)
                                         .borrow<&FlovatarDustToken.Vault{FungibleToken.Receiver}>() 
                                         ?? panic("User's vault was not found")
@@ -275,7 +275,7 @@ access(all) contract DustLender {
             let vault <- DustLender.witdrawDustFromThisWalletVault(amount: amount)
             let capital = DustLender.getCollateralVaultDustBalance()
             emit CapitalWithdrawn(amount: vault.balance, receiver: receiver, capital: capital)
-            DustLender.funDepositDustToUser(vault: <- vault, receiver: receiver)
+            DustLender.transferDustToUser(vault: <- vault, receiver: receiver)
         }
     }
     // /////////////////////////////////////////////////////////////////////
