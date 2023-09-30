@@ -1,5 +1,5 @@
-// import Flovatar from "../contracts/lib/Flovatar.cdc"
 // import NonFungibleToken from "../contracts/interfaces/NonFungibleToken.cdc"
+// import Flovatar from "../contracts/lib/Flovatar.cdc"
 import DustLender from "../contracts/DustLender.cdc"
 
 transaction(flovatarId: UInt64, wallet: Address) {

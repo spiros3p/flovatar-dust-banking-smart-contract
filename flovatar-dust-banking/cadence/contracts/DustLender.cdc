@@ -107,6 +107,7 @@ access(all) contract DustLender {
         return self.maxDaysOfLoan
     }
 
+    // feth a wallets taken loans info
     access(all) fun getUserEntries(wallet: Address): {UInt64: CollateralizedFlovatar} {
         return self.collateralLedger[wallet] ?? panic("No entry found for this wallet")
     }
