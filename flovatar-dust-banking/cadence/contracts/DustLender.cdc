@@ -4,6 +4,12 @@ import FlovatarInbox from "./lib/FlovatarInbox.cdc"
 import NonFungibleToken from "./interfaces/NonFungibleToken.cdc"
 import FungibleToken from "./interfaces/FungibleToken.cdc"
 
+/* 
+    - the reason this contract needs to store the Flovatar NFTs in a Flovatar.Collection 
+    in the storage path, is due to the Flovatar.getFlovatarRarityScore() method which is called 
+    in FlovatarInbox.claimFlovatarCommunityDust() to claim daily dust
+ */
+
 access(all) contract DustLender {
 
     // /////////////////////////////////////////////////////////////////////
@@ -66,6 +72,11 @@ access(all) contract DustLender {
         return self.serviceFee
     }
 
+    // fetch the current max days of loaning
+    access(all) fun getCurrentMaxDaysOfLoan(): UFix64 {
+        return self.maxDaysOfLoan
+    }
+
     // method to deposit Dust in the wallet's vault for lending
     access(all) fun depositCapital(dustVault: @FungibleToken.Vault) {
         pre {
@@ -114,9 +125,6 @@ access(all) contract DustLender {
     }
 
     access(self) fun registerLoanToLedger(wallet: Address, dustAmount: UFix64, flovatarId: UInt64): CollateralizedFlovatar? {
-        //pre {
-        //    !self.collateralLedger[wallet].containsKey(flovatarId) : "Ledger already contains an entry for this Flovatar!"
-        //}
         let ledgerEntry = CollateralizedFlovatar(
             dustAmountToClaim: dustAmount,
             flovatarId: flovatarId,
@@ -140,10 +148,10 @@ access(all) contract DustLender {
     }
 
     access(contract) fun funDepositDustToUser(vault: @FungibleToken.Vault, receiver: Address) {
-        let vaultUser = getAccount(receiver).getCapability(FlovatarDustToken.VaultReceiverPath)
+        let vaultRefUser = getAccount(receiver).getCapability(FlovatarDustToken.VaultReceiverPath)
                                         .borrow<&FlovatarDustToken.Vault{FungibleToken.Receiver}>() 
                                         ?? panic("User's vault was not found")
-        vaultUser.deposit(from: <- vault)           
+        vaultRefUser.deposit(from: <- vault)           
     }
 
     access(contract) fun depositFlovatarInThisWalletCollection(flov: @Flovatar.NFT) {
@@ -195,13 +203,6 @@ access(all) contract DustLender {
     // /////////////////////////////////////////////////////////////////////
     // /////////////////////////////////////////////////////////////////////
 
-
-    // depositCollateral (flovatar, days, userCollectionCap/wallet)
-    //// FlovatarInbox.claimFlovatarCommunityDust
-    //// flovatarScore = Flovatar.getFlovatarRarityScore(address: address, flovatarId: id)
-    //// dustPerDay = (3.0 + flovatarScore) * FlovatarInbox.dustPerDayPerScore
-    //// move dust out of this accounts vault, into depositor's vault
-
     // calculateAmountToHarvest (flovatar_id)
     //// FlovatarInbox.getClaimableFlovatarCommunityDust
 
@@ -210,30 +211,14 @@ access(all) contract DustLender {
     //// FlovatarInbox.getClaimableFlovatarCommunityDust
     //// get the userCollectionCap from the dictionary and 
     //// deposit the flovatar there
+    // getClaimableFlovatarCommunityDust
 
     // harvestDust (flovatar_id, )
 
-    // dict => { Address: CollateralStruct[] }
-
-    // getOwnerVaultCap(wallet): return owner's Vault public cap to deposit Dust
-
-    // getOwnerCollectionCap(wallet): return owner's collection public cap
-
-/*     
-    // struct
-        CollateralStruct {
-            flovatar_Id
-            // unlockTime
-            // userCollectionCap
-            wallet
-            pawnedAmount = 500
-        } 
-*/
-    
     init() {
         // open for business
         self.lendingIsActive = true
-        self.serviceFee = 0.05
+        self.serviceFee = 0.05 // 5%
         self.maxDaysOfLoan = 15
         self.collateralLedger = {}
 
