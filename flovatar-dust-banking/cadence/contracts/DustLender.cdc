@@ -65,7 +65,7 @@ access(all) contract DustLender {
     access(all) event ContractInitialized()
     access(all) event CapitalDeposited(amount: UFix64)
     access(all) event CapitalWithdrawn(amount: UFix64, receiver: Address, capital: UFix64)
-    access(all) event CollateralDeposited(from: Address, flovatarId: UInt64, entry: CollateralizedFlovatar?)
+    access(all) event CollateralDeposited(from: Address, flovatarId: UInt64, entry: CollateralizedFlovatar)
     access(all) event CollateralRetrieved(wallet: Address, flovatarId: UInt64, entry: CollateralizedFlovatar?)
     // /////////////////////////////////////////////////////////////////////
     // /////////////////////////////////////////////////////////////////////
@@ -217,7 +217,7 @@ access(all) contract DustLender {
         return <- self.account.borrow<&Flovatar.Collection{NonFungibleToken.Provider}>(from: Flovatar.CollectionStoragePath)!.withdraw(withdrawID: id)
     }
 
-    access(self) fun registerLoanToLedger(wallet: Address, dustAmount: UFix64, flovatarId: UInt64): CollateralizedFlovatar? {
+    access(self) fun registerLoanToLedger(wallet: Address, dustAmount: UFix64, flovatarId: UInt64): CollateralizedFlovatar {
         let ledgerEntry = CollateralizedFlovatar(
             dustAmountToClaim: dustAmount,
             flovatarId: flovatarId,
@@ -225,12 +225,13 @@ access(all) contract DustLender {
             timestamp: getCurrentBlock().timestamp
         )
         if self.collateralLedger.containsKey(wallet) {
-            return self.collateralLedger[wallet]!.insert(key: flovatarId, ledgerEntry)
+            self.collateralLedger[wallet]!.insert(key: flovatarId, ledgerEntry)
 
         } else {
             self.collateralLedger.insert(key: wallet, {})
-            return self.collateralLedger[wallet]!.insert(key: flovatarId, ledgerEntry)
+            self.collateralLedger[wallet]!.insert(key: flovatarId, ledgerEntry)
         }
+        return ledgerEntry
     }
 
     access(self) fun removeFromLedger(wallet: Address, flovatarId: UInt64): CollateralizedFlovatar? {
