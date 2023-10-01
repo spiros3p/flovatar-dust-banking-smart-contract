@@ -32,6 +32,7 @@ import FungibleToken from "./interfaces/FungibleToken.cdc"
 
     POTENTIAL UPGRADES
     - solving the above flaws
+    - be able to return the loaned amount earlier and receive back the flovatar
     - be abble to collect Dust mid way through the loan
         - that would help with liquidity of the contract
 
