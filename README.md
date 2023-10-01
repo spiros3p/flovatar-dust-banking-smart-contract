@@ -8,7 +8,7 @@ This smart contract aims to enhance the power of the Flovatar NFTs, a Flow block
 https://flovatar.com/
 
 MVP UI to access the smart contract's functions has been developed and deployed in the following github page
-and can be accessed with a TestNet wallet:
+and can be accessed with a TestNet wallet:     
 https://spiros3p.github.io/flovatar-dust-banking-app/
 
 Flovatar NFTs, thanks to the Flovatar team's ideas, can collect daily the $DUST token, project's native token, a FT on the Flow blockchain.
