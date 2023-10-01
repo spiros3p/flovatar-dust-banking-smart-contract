@@ -7,7 +7,7 @@ https://flow.com/post/september-2023-cadence-competition
 This smart contract aims to enhance the power of the Flovatar NFTs, a Flow blockchain that can be found here:    
 https://flovatar.com/
 
-MVP UI to access the smart contract's functions has been developed and deployed in the following github page
+MVP UI Dapp to access the smart contract's functions has been developed and deployed in the following github page
 and can be accessed with a TestNet wallet:     
 https://spiros3p.github.io/flovatar-dust-banking-app/
 
