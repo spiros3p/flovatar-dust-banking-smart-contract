@@ -7,6 +7,10 @@ https://flow.com/post/september-2023-cadence-competition
 This smart contract aims to enhance the power of the Flovatar NFTs, a Flow blockchain that can be found here:    
 https://flovatar.com/
 
+MVP UI to access the smart contract's functions has been developed and deployed in the following github page
+and can be accessed with a TestNet wallet:
+https://spiros3p.github.io/flovatar-dust-banking-app/
+
 Flovatar NFTs, thanks to the Flovatar team's ideas, can collect daily the $DUST token, project's native token, a FT on the Flow blockchain.
 
 What this smart contract offers is to supply $DUST to a user, that equals to a Flovatar's $DUST/day times the selected amount of days (minus a service fee), by transferring the Flovatar the smart contract's deployer's wallet as collateral.
