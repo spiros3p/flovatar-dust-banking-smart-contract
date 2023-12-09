@@ -30,6 +30,9 @@ import FungibleToken from "./interfaces/FungibleToken.cdc"
         to pass private cap to withdraw Dust from their vault, after sending the flovatar back 
         and collecting the Dust in their wallet. (if all these actions can be performed in one go)
 
+    v0.2
+    - create new custom resource to be stored in the user's wallet and store/lock the flovatar until the amount of dust can be claimed or repaid
+
     POTENTIAL UPGRADES
     - solving the above flaws
     - be able to return the loaned amount earlier and receive back the flovatar
@@ -96,6 +99,16 @@ access(all) contract DustLender {
     access(all) fun getCollateralVaultDustBalance(): UFix64 {
         let vaultCap = self.account.getCapability(FlovatarDustToken.VaultBalancePath)
         return vaultCap.borrow<&FlovatarDustToken.Vault{FungibleToken.Balance}>()!.balance
+    }
+
+    access(all) fun getTotalAmountOwed(): UFix64 {
+        var amount = 0.0
+        for wallet in self.collateralLedger.values {
+            for collateralEntry in wallet.values {
+                amount = amount + collateralEntry.dustAmountToClaim
+            }
+        }
+        return amount
     }
 
     // fetch the current service fee
